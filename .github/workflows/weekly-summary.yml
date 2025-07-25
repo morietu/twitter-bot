@@ -1,0 +1,33 @@
+name: Weekly Twitter Summary
+
+on:
+  schedule:
+    - cron: '0 23 * * 0'  # 毎週日曜23時（日本時間月曜8時）
+  workflow_dispatch:  # 手動実行もできるようにする
+
+jobs:
+  run-weekly-summary:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run weekly_summary.py
+        run: python analysis/weekly_summary.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          API_KEY: ${{ secrets.API_KEY }}
+          API_SECRET: ${{ secrets.API_SECRET }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          ACCESS_SECRET: ${{ secrets.ACCESS_SECRET }}
